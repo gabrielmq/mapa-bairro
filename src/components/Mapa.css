@@ -1,0 +1,13 @@
+#info-window {
+  color: #282c34;
+}
+
+#img-infowindow {
+  height: 200px;
+}
+
+#info-container {
+  font-size: 15px;
+  color: #242323;
+  padding: 5px 0;
+}

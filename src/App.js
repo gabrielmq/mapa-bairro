@@ -13,6 +13,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import './App.css';
 import Mapa from './components/Mapa';
+import foursquareAPI from './services/foursquare-api';
 
 const drawerWidth = 280;
 
@@ -74,17 +75,72 @@ const styles = theme => ({
   }
 });
 
+const locais = [
+  '52bd77f5498e6ccda037ae57',
+  '537134c0498e2e14ba6260cd',
+  '4ba54394f964a5206bf338e3',
+  '53e4c456498e457cc2b1316e',
+  '536e8826498e9efb781871e8'
+];
+
 class App extends Component {
   state = {
-    openDrawer: true
+    openDrawer: false,
+    marcadores: [],
+    marcadorSelecionado: null
   };
+
+  componentDidMount() {
+    this.getInfoFoursquare();
+  }
 
   handleDrawerOpen = () => this.setState({ openDrawer: true });
 
   handleDrawerClose = () => this.setState({ openDrawer: false });
 
+  getInfoFoursquare = () => {
+    const marcadoresAux = [];
+    locais.forEach(local => {
+      foursquareAPI
+        .get(
+          `/venues/${local}?client_id=${
+            process.env.REACT_APP_FOURSQUARE_CLID
+          }&client_secret=${process.env.REACT_APP_FOURSQUARE_CLSEC}&v=20190621`
+        )
+        .then(res => {
+          marcadoresAux.push(res.data['response']['venue']);
+        })
+        .catch(error => {
+          if (error.status === 429) {
+            console.error(
+              'Número permitido de requisições a API do Foursquare foi execido. Tente novamente outro dia.'
+            );
+          } else {
+            console.error('Não foi possível carregar os marcadores.');
+          }
+        });
+    });
+
+    setTimeout(
+      () =>
+        this.setState({
+          marcadores: marcadoresAux,
+          marcadorSelecionado: null
+        }),
+      5000
+    );
+  };
+
+  handleSelecionarMarcador = marcador =>
+    this.setState({ marcadorSelecionado: marcador });
+
+  handleFecharInfoWindow = () => {
+    this.setState({ marcadorSelecionado: null });
+  };
+
   render() {
     const { classes } = this.props;
+    const { marcadores, marcadorSelecionado } = this.state;
 
     return (
       <div className={classes.root}>
@@ -135,7 +191,12 @@ class App extends Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <Mapa />
+          <Mapa
+            marcadores={marcadores}
+            marcadorSelecionado={marcadorSelecionado}
+            selecionarMarcador={this.handleSelecionarMarcador}
+            fecharInfoWindow={this.handleFecharInfoWindow}
+          />
         </main>
       </div>
     );
