@@ -13,67 +13,11 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import './App.css';
 import Mapa from './components/Mapa';
+import Alerta from './components/Alerta';
+import ListaDeLocais from './components/ListaDeLocais';
+
 import foursquareAPI from './services/foursquare-api';
-
-const drawerWidth = 280;
-
-const styles = theme => ({
-  root: {
-    display: 'flex'
-  },
-  appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
-  },
-  appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
-  },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  hide: {
-    display: 'none'
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth
-  },
-  drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-end'
-  },
-  content: {
-    flexGrow: 1,
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    }),
-    marginLeft: -drawerWidth
-  },
-  contentShift: {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    }),
-    marginLeft: 0
-  },
-  close: {
-    padding: theme.spacing(0.5)
-  }
-});
+import styles from './app-styles';
 
 const locais = [
   '52bd77f5498e6ccda037ae57',
@@ -85,9 +29,11 @@ const locais = [
 
 class App extends Component {
   state = {
-    openDrawer: false,
+    openDrawer: window.innerWidth >= 980 ? true : false,
     marcadores: [],
-    marcadorSelecionado: null
+    marcadorSelecionado: null,
+    openSnackbar: false,
+    msgSnackbar: ''
   };
 
   componentDidMount() {
@@ -99,6 +45,10 @@ class App extends Component {
   handleDrawerClose = () => this.setState({ openDrawer: false });
 
   getInfoFoursquare = () => {
+    this.setState({
+      openSnackbar: true,
+      msgSnackbar: 'Carregando marcadores...'
+    });
     const marcadoresAux = [];
     locais.forEach(local => {
       foursquareAPI
@@ -111,24 +61,33 @@ class App extends Component {
           marcadoresAux.push(res.data['response']['venue']);
         })
         .catch(error => {
-          if (error.status === 429) {
-            console.error(
-              'Número permitido de requisições a API do Foursquare foi execido. Tente novamente outro dia.'
-            );
+          let msg;
+          if (error.response.status === 429) {
+            msg =
+              'Não foi possível obter informações do Foursquare. Tente mais tarde';
+            console.error(msg);
           } else {
-            console.error('Não foi possível carregar os marcadores.');
+            msg = 'Não foi possível carregar os marcadores.';
+            console.error(msg);
           }
-        });
+          this.setState({
+            openSnackbar: true,
+            msgSnackbar: msg
+          });
+        })
+        .finally(() =>
+          setTimeout(
+            () =>
+              this.setState({
+                marcadores: marcadoresAux,
+                marcadorSelecionado: null,
+                openSnackbar: false,
+                msgSnackbar: ''
+              }),
+            6000
+          )
+        );
     });
-
-    setTimeout(
-      () =>
-        this.setState({
-          marcadores: marcadoresAux,
-          marcadorSelecionado: null
-        }),
-      5000
-    );
   };
 
   handleSelecionarMarcador = marcador =>
@@ -138,9 +97,26 @@ class App extends Component {
     this.setState({ marcadorSelecionado: null });
   };
 
+  handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    console.log(reason);
+    this.setState({ openSnackbar: false });
+  };
+
+  handleExited = () => this.setState({ openSnackbar: false });
+
   render() {
     const { classes } = this.props;
-    const { marcadores, marcadorSelecionado } = this.state;
+
+    const {
+      openDrawer,
+      marcadores,
+      marcadorSelecionado,
+      openSnackbar,
+      msgSnackbar
+    } = this.state;
 
     return (
       <div className={classes.root}>
@@ -148,7 +124,7 @@ class App extends Component {
         <AppBar
           position="fixed"
           className={clsx(classes.appBar, {
-            [classes.appBarShift]: this.state.openDrawer
+            [classes.appBarShift]: openDrawer
           })}
         >
           <Toolbar>
@@ -157,10 +133,7 @@ class App extends Component {
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
               edge="start"
-              className={clsx(
-                classes.menuButton,
-                this.state.openDrawer && classes.hide
-              )}
+              className={clsx(classes.menuButton, openDrawer && classes.hide)}
             >
               <MenuIcon />
             </IconButton>
@@ -173,7 +146,7 @@ class App extends Component {
           className={classes.drawer}
           variant="persistent"
           anchor="left"
-          open={this.state.openDrawer}
+          open={openDrawer}
           classes={{
             paper: classes.drawerPaper
           }}
@@ -183,11 +156,14 @@ class App extends Component {
               <ChevronLeftIcon />
             </IconButton>
           </div>
-          Locais...
+          <ListaDeLocais
+            marcadores={marcadores}
+            selecionarMarcador={this.handleSelecionarMarcador}
+          />
         </Drawer>
         <main
           className={clsx(classes.content, {
-            [classes.contentShift]: this.state.openDrawer
+            [classes.contentShift]: openDrawer
           })}
         >
           <div className={classes.drawerHeader} />
@@ -196,6 +172,13 @@ class App extends Component {
             marcadorSelecionado={marcadorSelecionado}
             selecionarMarcador={this.handleSelecionarMarcador}
             fecharInfoWindow={this.handleFecharInfoWindow}
+          />
+
+          <Alerta
+            exibir={openSnackbar}
+            close={this.handleClose}
+            exited={this.handleExited}
+            mensagem={msgSnackbar}
           />
         </main>
       </div>
