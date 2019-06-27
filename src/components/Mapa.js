@@ -37,7 +37,7 @@ function Map(props) {
           >
             {marcadorSelecionado === marcador && (
               <InfoWindow onCloseClick={props.fecharInfoWindow}>
-                <div id="info-window">
+                <div className="info-window">
                   <img
                     id="img-infowindow"
                     src={

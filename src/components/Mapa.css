@@ -1,9 +1,10 @@
-#info-window {
+.info-window {
   color: #282c34;
+  width: 300px;
 }
 
 #img-infowindow {
-  height: 200px;
+  height: 100%;
 }
 
 #info-container {

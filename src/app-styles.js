@@ -1,4 +1,7 @@
-const drawerWidth = window.innerWidth >= 768 ? 330 : 275;
+/**
+ * Estilização do Drawer
+ */
+const drawerWidth = window.innerWidth >= 768 ? 330 : 255;
 const styles = theme => ({
   root: {
     display: 'flex'

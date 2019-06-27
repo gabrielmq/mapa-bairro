@@ -44,12 +44,17 @@ class App extends Component {
 
   handleDrawerClose = () => this.setState({ openDrawer: false });
 
+  /**
+   * Realiza a busca das informações dos locais no Foursquare
+   */
   getInfoFoursquare = () => {
     this.setState({
       openSnackbar: true,
       msgSnackbar: 'Carregando marcadores...'
     });
+
     const marcadoresAux = [];
+
     locais.forEach(local => {
       foursquareAPI
         .get(
@@ -75,36 +80,34 @@ class App extends Component {
             msgSnackbar: msg
           });
         })
-        .finally(() =>
-          setTimeout(
-            () =>
-              this.setState({
-                marcadores: marcadoresAux,
-                marcadorSelecionado: null,
-                openSnackbar: false,
-                msgSnackbar: ''
-              }),
-            6000
-          )
-        );
+        .finally(() => {
+          this.setState({
+            marcadores: marcadoresAux,
+            marcadorSelecionado: null,
+            openSnackbar: false,
+            msgSnackbar: ''
+          });
+        });
     });
   };
 
+  /** Marca no mapa o local selecionado */
   handleSelecionarMarcador = marcador =>
     this.setState({ marcadorSelecionado: marcador });
 
-  handleFecharInfoWindow = () => {
-    this.setState({ marcadorSelecionado: null });
-  };
+  /** Fecha a janela com as informações do local */
+  handleFecharInfoWindow = () => this.setState({ marcadorSelecionado: null });
 
+  /** Trata o fechamento da Snackbar */
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    console.log(reason);
+
     this.setState({ openSnackbar: false });
   };
 
+  /** Trata o fechamento automatico da Snackbar */
   handleExited = () => this.setState({ openSnackbar: false });
 
   render() {
