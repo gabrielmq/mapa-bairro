@@ -4,16 +4,21 @@ Este projeto é uma aplicação web que utiliza o Google Maps para exibir um map
 
 ## Pré-requisitos
 
-* NPM
+- NPM 6+
 
 ## Rodando a aplicação
 
-* Clone o projeto `https://github.com/gabrielmq/mapa-bairro.git`
-* Acesse o diretório do projeto pelo prompt de comando.
-* Execute o comando `npm install` para instalar as  dependências do projeto.
-* Crie um arquivo `.env.local` no diretorio raiz do projeto com as chaves de acesso do Google Maps e do Fourquare.
-* Execute o comando `npm start` para iniciar a aplicação.
-* Se o navegador não abrir automaticamente com a aplicação aberta, acesse `http://localhost:3000`
+- Clone o projeto `https://github.com/gabrielmq/mapa-bairro.git`
+- Acesse o diretório do projeto pelo prompt de comando.
+- Execute o comando `npm install` para instalar as dependências do projeto.
+- Crie um arquivo `.env.local` no diretorio raiz do projeto com as chaves de acesso do Google Maps e do Fourquare, conforme exemplo:
+  - ```
+      REACT_APP_GOOGLE_KEY=""
+      REACT_APP_FOURSQUARE_CLID=""
+      REACT_APP_FOURSQUARE_CLSEC=""
+    ```
+- Execute o comando `npm start` para iniciar a aplicação.
+- Se o navegador não abrir automaticamente com a aplicação aberta, acesse `http://localhost:3000`
 
 ## Licensa
 
