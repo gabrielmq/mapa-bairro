@@ -15,7 +15,7 @@ function Map(props) {
 
   return (
     <GoogleMap
-      defaultZoom={14}
+      defaultZoom={15}
       defaultCenter={{ lat: -23.56405, lng: -46.688538 }}
       defaultOptions={{ mapTypeControl: false }}
       onClick={props.fecharInfoWindow}
