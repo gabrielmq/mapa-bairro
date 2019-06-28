@@ -7,8 +7,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 
-import escapeRegExp from 'escape-string-regexp';
-
 const styles = theme => ({
   textField: {
     marginLeft: theme.spacing(1),
@@ -17,25 +15,8 @@ const styles = theme => ({
 });
 
 class ListaDeLocais extends Component {
-  state = {
-    filtro: ''
-  };
-
-  handleFiltroChange = e => this.setState({ filtro: e.target.value });
-
-  filtrarLista = marcadores => {
-    const { filtro } = this.state;
-    if (!filtro) return marcadores;
-
-    const regex = new RegExp(escapeRegExp(filtro), 'i');
-    return marcadores.filter(marcador => regex.test(marcador.name));
-  };
-
   render() {
     const { classes, marcadores } = this.props;
-    const { filtro } = this.state;
-
-    const listaFiltrada = this.filtrarLista(marcadores);
 
     return (
       <>
@@ -43,17 +24,16 @@ class ListaDeLocais extends Component {
           id="outlined-name"
           label="Filtrar local"
           className={classes.textField}
-          value={filtro}
-          onChange={this.handleFiltroChange}
+          value={this.props.filtro}
+          onChange={this.props.atualizarFiltro}
           margin="normal"
           variant="outlined"
         />
 
-        {listaFiltrada.map((marcador, i) => (
+        {marcadores.map((marcador, i) => (
           <div key={i} style={{ padding: '0 10px' }}>
             <List dense>
               <ListItem
-                key={marcador.id}
                 button
                 style={{ padding: '0' }}
                 onClick={() => this.props.selecionarMarcador(marcador)}

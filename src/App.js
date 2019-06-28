@@ -19,6 +19,8 @@ import ListaDeLocais from './components/ListaDeLocais';
 import foursquareAPI from './services/foursquare-api';
 import styles from './app-styles';
 
+import escapeRegExp from 'escape-string-regexp';
+
 const locais = [
   '52bd77f5498e6ccda037ae57',
   '537134c0498e2e14ba6260cd',
@@ -33,7 +35,8 @@ class App extends Component {
     marcadores: [],
     marcadorSelecionado: null,
     openSnackbar: false,
-    msgSnackbar: ''
+    msgSnackbar: '',
+    filtro: ''
   };
 
   componentDidMount() {
@@ -81,19 +84,24 @@ class App extends Component {
           });
         })
         .finally(() => {
-          this.setState({
-            marcadores: marcadoresAux,
-            marcadorSelecionado: null,
-            openSnackbar: false,
-            msgSnackbar: ''
-          });
+          setTimeout(
+            () =>
+              this.setState({
+                marcadores: marcadoresAux,
+                marcadorSelecionado: null,
+                openSnackbar: false,
+                msgSnackbar: ''
+              }),
+            6000
+          );
         });
     });
   };
 
   /** Marca no mapa o local selecionado */
-  handleSelecionarMarcador = marcador =>
+  handleSelecionarMarcador = marcador => {
     this.setState({ marcadorSelecionado: marcador });
+  };
 
   /** Fecha a janela com as informações do local */
   handleFecharInfoWindow = () => this.setState({ marcadorSelecionado: null });
@@ -110,6 +118,16 @@ class App extends Component {
   /** Trata o fechamento automatico da Snackbar */
   handleExited = () => this.setState({ openSnackbar: false });
 
+  handleFiltroChange = e => this.setState({ filtro: e.target.value });
+
+  getMarcadoresFiltrados = marcadores => {
+    const { filtro } = this.state;
+    if (!filtro) return marcadores;
+
+    const regex = new RegExp(escapeRegExp(filtro), 'i');
+    return marcadores.filter(marcador => regex.test(marcador.name));
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -120,6 +138,8 @@ class App extends Component {
       openSnackbar,
       msgSnackbar
     } = this.state;
+
+    const locaisMarcados = this.getMarcadoresFiltrados(marcadores);
 
     return (
       <div className={classes.root}>
@@ -160,8 +180,9 @@ class App extends Component {
             </IconButton>
           </div>
           <ListaDeLocais
-            marcadores={marcadores}
+            marcadores={locaisMarcados}
             selecionarMarcador={this.handleSelecionarMarcador}
+            atualizarFiltro={this.handleFiltroChange}
           />
         </Drawer>
         <main
@@ -171,7 +192,7 @@ class App extends Component {
         >
           <div className={classes.drawerHeader} />
           <Mapa
-            marcadores={marcadores}
+            marcadores={locaisMarcados}
             marcadorSelecionado={marcadorSelecionado}
             selecionarMarcador={this.handleSelecionarMarcador}
             fecharInfoWindow={this.handleFecharInfoWindow}
