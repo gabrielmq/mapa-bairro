@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -14,42 +14,36 @@ const styles = theme => ({
   }
 });
 
-class ListaDeLocais extends Component {
-  render() {
-    const { classes, marcadores } = this.props;
+const ListaDeLocais = ({ classes, marcadores, filtro, atualizarFiltro }) => (
+  <>
+    <TextField
+      id="outlined-name"
+      label="Filtrar local"
+      className={classes.textField}
+      value={filtro}
+      onChange={atualizarFiltro}
+      margin="normal"
+      variant="outlined"
+    />
 
-    return (
-      <>
-        <TextField
-          id="outlined-name"
-          label="Filtrar local"
-          className={classes.textField}
-          value={this.props.filtro}
-          onChange={this.props.atualizarFiltro}
-          margin="normal"
-          variant="outlined"
-        />
-
-        {marcadores.map((marcador, i) => (
-          <div key={i} style={{ padding: '0 10px' }}>
-            <List dense>
-              <ListItem
-                button
-                style={{ padding: '0' }}
-                onClick={() => this.props.selecionarMarcador(marcador)}
-              >
-                <ListItemText
-                  primary={marcador.name}
-                  secondary={marcador.location.formattedAddress[0]}
-                />
-              </ListItem>
-              <Divider />
-            </List>
-          </div>
-        ))}
-      </>
-    );
-  }
-}
+    {marcadores.map((marcador, i) => (
+      <div key={i} style={{ padding: '0 10px' }}>
+        <List dense>
+          <ListItem
+            button
+            style={{ padding: '0' }}
+            onClick={() => this.props.selecionarMarcador(marcador)}
+          >
+            <ListItemText
+              primary={marcador.name}
+              secondary={marcador.location.formattedAddress[0]}
+            />
+          </ListItem>
+          <Divider />
+        </List>
+      </div>
+    ))}
+  </>
+)
 
 export default withStyles(styles)(ListaDeLocais);
