@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   GoogleMap,
@@ -65,24 +65,22 @@ function Map(props) {
 
 const WrappedMap = withScriptjs(withGoogleMap(Map));
 
-export default class Mapa extends Component {
-  render() {
-    return (
-      // calc(100vh - 70.50% - 29.50%)
-      <div style={{ width: '100wv', height: 'calc(100vh - 70.50% - 29.50%)' }}>
-        <WrappedMap
-          googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${
-            process.env.REACT_APP_GOOGLE_KEY
-          }`}
-          loadingElement={<div style={{ height: `100%` }} />}
-          containerElement={<div style={{ height: `100%` }} />}
-          mapElement={<div style={{ height: `100%` }} />}
-          marcadores={this.props.marcadores}
-          marcadorSelecionado={this.props.marcadorSelecionado}
-          selecionarMarcador={this.props.selecionarMarcador}
-          fecharInfoWindow={this.props.fecharInfoWindow}
-        />
-      </div>
-    );
-  }
-}
+const Mapa = ({ marcadores, marcadorSelecionado, selecionarMarcador, fecharInfoWindow }) => (
+  // calc(100vh - 70.50% - 29.50%)
+  <div style={{ width: '100wv', height: 'calc(100vh - 70.50% - 29.50%)' }}>
+    <WrappedMap
+      googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${
+        process.env.REACT_APP_GOOGLE_KEY
+      }`}
+      loadingElement={<div style={{ height: `100%` }} />}
+      containerElement={<div style={{ height: `100%` }} />}
+      mapElement={<div style={{ height: `100%` }} />}
+      marcadores={marcadores}
+      marcadorSelecionado={marcadorSelecionado}
+      selecionarMarcador={selecionarMarcador}
+      fecharInfoWindow={fecharInfoWindow}
+    />
+  </div>
+)
+
+export default Mapa;
