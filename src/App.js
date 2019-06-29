@@ -69,18 +69,10 @@ class App extends Component {
           marcadoresAux.push(res.data['response']['venue']);
         })
         .catch(error => {
-          let msg;
-          if (error.response.status === 429) {
-            msg =
-              'Não foi possível obter informações do Foursquare. Tente mais tarde';
-            console.error(msg);
-          } else {
-            msg = 'Não foi possível carregar os marcadores.';
-            console.error(msg);
-          }
+          console.log(error.response);
           this.setState({
             openSnackbar: true,
-            msgSnackbar: msg
+            msgSnackbar: 'Não foi possível carregar as informações no Mapa.'
           });
         })
         .finally(() => {
