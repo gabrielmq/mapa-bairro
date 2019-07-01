@@ -29,6 +29,10 @@ const locais = [
   '536e8826498e9efb781871e8'
 ];
 
+window.gm_authFailure = () => {
+  alert('Não foi possível carregar o Google Maps.');
+};
+
 class App extends Component {
   state = {
     openDrawer: window.innerWidth >= 980 ? true : false,
