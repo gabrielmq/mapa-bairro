@@ -14,7 +14,13 @@ const styles = theme => ({
   }
 });
 
-const ListaDeLocais = ({ classes, marcadores, filtro, atualizarFiltro }) => (
+const ListaDeLocais = ({
+  classes,
+  marcadores,
+  filtro,
+  atualizarFiltro,
+  selecionarMarcador
+}) => (
   <>
     <TextField
       id="outlined-name"
@@ -32,7 +38,7 @@ const ListaDeLocais = ({ classes, marcadores, filtro, atualizarFiltro }) => (
           <ListItem
             button
             style={{ padding: '0' }}
-            onClick={() => this.props.selecionarMarcador(marcador)}
+            onClick={() => selecionarMarcador(marcador)}
           >
             <ListItemText
               primary={marcador.name}
@@ -44,6 +50,6 @@ const ListaDeLocais = ({ classes, marcadores, filtro, atualizarFiltro }) => (
       </div>
     ))}
   </>
-)
+);
 
 export default withStyles(styles)(ListaDeLocais);

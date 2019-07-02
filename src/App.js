@@ -29,10 +29,6 @@ const locais = [
   '536e8826498e9efb781871e8'
 ];
 
-window.gm_authFailure = () => {
-  alert('Não foi possível carregar o Google Maps.');
-};
-
 class App extends Component {
   state = {
     openDrawer: window.innerWidth >= 980 ? true : false,
@@ -44,7 +40,16 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.getInfoFoursquare();
+    let mapsError = false;
+    window.gm_authFailure = () => {
+      mapsError = true;
+      alert('Não foi possível carregar o Google Maps.');
+    };
+
+    setTimeout(
+      () => this.getInfoFoursquare(mapsError),
+      mapsError ? 5000 : 1500
+    );
   }
 
   handleDrawerOpen = () => this.setState({ openDrawer: true });
@@ -54,7 +59,15 @@ class App extends Component {
   /**
    * Realiza a busca das informações dos locais no Foursquare
    */
-  getInfoFoursquare = () => {
+  getInfoFoursquare = mapsError => {
+    if (mapsError) {
+      this.setState({
+        openSnackbar: true,
+        msgSnackbar: 'Não foi possível carregar os marcadores.'
+      });
+      return;
+    }
+
     this.setState({
       openSnackbar: true,
       msgSnackbar: 'Carregando marcadores...'
@@ -73,7 +86,6 @@ class App extends Component {
           marcadoresAux.push(res.data['response']['venue']);
         })
         .catch(error => {
-          console.log(error.response);
           this.setState({
             openSnackbar: true,
             msgSnackbar: 'Não foi possível carregar as informações no Mapa.'
@@ -88,7 +100,7 @@ class App extends Component {
                 openSnackbar: false,
                 msgSnackbar: ''
               }),
-            6000
+            3500
           );
         });
     });

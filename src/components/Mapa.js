@@ -65,7 +65,12 @@ function Map(props) {
 
 const WrappedMap = withScriptjs(withGoogleMap(Map));
 
-const Mapa = ({ marcadores, marcadorSelecionado, selecionarMarcador, fecharInfoWindow }) => (
+const Mapa = ({
+  marcadores,
+  marcadorSelecionado,
+  selecionarMarcador,
+  fecharInfoWindow
+}) => (
   // calc(100vh - 70.50% - 29.50%)
   <div style={{ width: '100wv', height: 'calc(100vh - 70.50% - 29.50%)' }}>
     <WrappedMap
@@ -81,6 +86,6 @@ const Mapa = ({ marcadores, marcadorSelecionado, selecionarMarcador, fecharInfoW
       fecharInfoWindow={fecharInfoWindow}
     />
   </div>
-)
+);
 
 export default Mapa;
